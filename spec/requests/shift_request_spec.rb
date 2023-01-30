@@ -94,7 +94,6 @@ RSpec.describe "Shifts", type: :request do
 
       it "does not update the shift if shoft not found" do
         shift_params = { slot: nil }
-
         patch "/workers/#{worker.id}/shifts/#{shift.id+111}", params: shift_params
         expect(response).to have_http_status(:not_found)
       end
@@ -102,6 +101,13 @@ RSpec.describe "Shifts", type: :request do
       it "does not update the shift if worker not found" do
         delete "/workers/#{worker.id+111}/shifts/#{shift.id}"
         expect(response).to have_http_status(:not_found)
+      end
+
+      it "does not update the shift if date was passed" do
+        shift_params = { slot: "eight_to_sixteen", date: "2023-01-01"}
+
+        patch "/workers/#{worker.id}/shifts/#{shift.id}", params: shift_params
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
